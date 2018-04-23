@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html ng-app="app">
+<head>
+	<meta charset="utf-8" />
+	<title>Wikidata query</title>
+	<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+	<link href="//fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+	<link rel="stylesheet" href="http://netdna.bootstrapcdn.com/font-awesome/2.0/css/font-awesome.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.css">
+	<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick-theme.min.css">
+	<link href="content/app.css" rel="stylesheet" />
+</head>
+<body>
+<div class="jumbotron">
+	<div class="container-fluid">
+		<div >
+			<div ng-class="{ 'alert': flash, 'alert-success': flash.type === 'success', 'alert-danger': flash.type === 'error' }" ng-if="flash" ng-bind="flash.message"></div>
+			<div ng-view></div>
+		</div>
+	</div>
+</div>
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.5/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0/angular.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0/angular-route.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.0/angular-cookies.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular-animate.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular-aria.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-ui-bootstrap/2.5.0/ui-bootstrap-tpls.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.6.0/slick.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/angular-slick-carousel/3.1.7/angular-slick.min.js"></script>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
+<!--<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.6.0/angular-messages.min.js"></script>-->
+<script src="app.js"></script>
+<script src="services/http.service.js"></script>
+
+<script src="services/query.service.js"></script>
+
+<script src="components/home/home.controller.js"></script>
+<script src="components/query_wikidata/query_wikidata.controller.js"></script>
+<script src="directives/nav_bar/nav_bar.directive.js"></script>
+
+</body>
+</html>

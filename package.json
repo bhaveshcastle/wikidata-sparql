@@ -1,0 +1,25 @@
+{
+  "name": "wikidata-sparql",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "formidable": "^1.2.1",
+    "koa": "^1.2.5",
+    "koa-cors": "0.0.16",
+    "koa-logger": "github:dkarpman/logger",
+    "koa-route": "^2.4.2",
+    "koa-router": "^5.4.0",
+    "koa-send": "^3.3.0",
+    "koa-static": "^2.0.0",
+    "lodash": "^4.17.5",
+    "minimist": "^1.2.0",
+    "request": "^2.85.0",
+    "wikidata-sdk": "^5.9.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

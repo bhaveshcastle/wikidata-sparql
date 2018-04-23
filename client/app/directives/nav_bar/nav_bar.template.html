@@ -1,0 +1,25 @@
+<nav class="navbar navbar-default" ng-controller="navbarController">
+  <div class="container">
+      <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+          </button>
+          
+      </div>
+
+      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+          <ul class="nav navbar-nav">
+
+              <!--class="active"-->
+              <li ng-class="{active: higlightedNav == ''}"><a href="#"ng-click="navbarRedirection('home')">Home</a></li>
+              <li ng-class="{active: higlightedNav == 'query_wikidata'}">
+                  <a href="" ng-click="navbarRedirection('query_wikidata')">Query Page</a>
+              </li>
+
+          </ul>
+      </div>
+  </div>
+</nav>
