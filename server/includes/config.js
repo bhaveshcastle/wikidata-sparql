@@ -1,5 +1,6 @@
 'use strict'
 
+const Promise = require('bluebird') ;
 const argv                        = require('minimist')(process.argv.slice(2));
 
 const config = {};

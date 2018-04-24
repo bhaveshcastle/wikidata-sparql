@@ -50,7 +50,7 @@ module.exports = Promise.coroutine(function* (params) {
   const [_res, _body] = yield request.getAsync(url);
   
   if (!_res || !_body) {
-    return Promise.reject(new Error());
+    return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
   }
 
   return {
