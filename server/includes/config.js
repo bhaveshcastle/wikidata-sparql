@@ -10,4 +10,6 @@ config.corsOptions = {
   origin : '*'
 }
 
+Promise.promisifyAll(require('request'), { multiArgs: true });
+
 module.exports                    = config ;
