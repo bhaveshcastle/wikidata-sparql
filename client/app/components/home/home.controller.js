@@ -5,9 +5,8 @@
     .module('app')
     .controller('HomeController', HomeController);
 
-  HomeController.$inject = ['QueryService', '$rootScope', '$mdDialog'];
-  function HomeController(QueryService, $rootScope, $mdDialog) {
+  HomeController.$inject = ['$rootScope', '$mdDialog'];
+  function HomeController($rootScope, $mdDialog) {
 
   }
-
 })();

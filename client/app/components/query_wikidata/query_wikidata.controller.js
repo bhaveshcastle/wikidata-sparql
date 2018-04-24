@@ -29,9 +29,10 @@
         .Query(query)
         .then((response) => {
           let query_data = response.data;
-          $scope.query_data = query_data;
+          // $scope.query_data = query_data;
+          $rootScope.showAlert(this, 'Response', query_data, 'Ok');
         }, (error) => {
-          $rootScope.showAlert(event, 'Response', error.message, 'Ok');
+          $rootScope.showAlert(this, 'Response', error.message, 'Ok');
         });
     };
 

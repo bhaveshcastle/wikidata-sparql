@@ -9,9 +9,15 @@ const CustomError   = require('../misc/custom_error.js')  ;
 
 module.exports = Promise.coroutine(function* (params) {
   const {
-
+    type, // 1 - Person, 2 - Brand
+    searchParam
   } = params;
 
+  if (!searchParam || type == undefined) {
+    return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
+  }
+
+  // Fetching person data
   const sparql_query = `
   SELECT ?itemLabel 
   (GROUP_CONCAT(DISTINCT ?awardLabel; SEPARATOR = ", ") AS ?awards) 
@@ -24,7 +30,7 @@ module.exports = Promise.coroutine(function* (params) {
   ?stated_in 
   WHERE {
     ?item wdt:P31 wd:Q5.
-    ?item rdfs:label "Cristiano Ronaldo"@en.
+    ?item rdfs:label "${searchParam}"@en.
     OPTIONAL { ?item wdt:P166 ?award. }
     OPTIONAL { ?item wdt:P21 ?gender. }
     OPTIONAL { ?item wdt:P18 ?image. }
@@ -54,7 +60,7 @@ module.exports = Promise.coroutine(function* (params) {
   }
 
   return {
-    data: _body
+    data: JSON.parse(_body)
   };
 
 });

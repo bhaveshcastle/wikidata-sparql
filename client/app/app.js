@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('app', ['ngRoute', 'ngCookies', 'ngMaterial', 'slickCarousel', 'dndLists'])
+    .module('app', ['ngRoute', 'ngCookies', 'ngMaterial'])
     .config(config)
     .run(run);
 

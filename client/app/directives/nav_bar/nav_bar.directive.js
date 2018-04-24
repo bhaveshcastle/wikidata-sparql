@@ -15,7 +15,7 @@
         let url_mappings = {
           "query_wikidata": {
             key: "query_wikidata",
-            url: "/query-wikidata"
+            url: "/query"
           }
         };
         let obj = url_mappings[key];
