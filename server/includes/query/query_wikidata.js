@@ -19,15 +19,15 @@ module.exports = Promise.coroutine(function* (params) {
 
   // Fetching person data
   const sparql_query = `
-  SELECT ?itemLabel 
+  SELECT
+  ?item 
+  (?itemLabel AS ?itemText)
   (GROUP_CONCAT(DISTINCT ?awardLabel; SEPARATOR = ", ") AS ?awards) 
-  ?genderLabel 
+  (?genderLabel AS ?genderText)
   (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ", ") AS ?images) 
   ?description 
-  (COUNT(DISTINCT ?test) AS ?langCount)  
-  (sum(if(strlen(str(?testLabel)) > 4, 1, 0)) as ?conditionCount)
+  (COUNT(DISTINCT ?test) AS ?langPages)
   ?sitelinks
-  ?stated_in 
   WHERE {
     ?item wdt:P31 wd:Q5.
     ?item rdfs:label "${searchParam}"@en.
@@ -48,7 +48,7 @@ module.exports = Promise.coroutine(function* (params) {
     FILTER((LANG(?description)) = "en")
     OPTIONAL { ?item wdt:P143 ?imported_from. }
   }
-  GROUP BY ?itemLabel ?gender ?genderLabel ?description ?wikipedia ?langCount ?stated_in ?sitelinks
+  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?wikipedia ?langPages ?sitelinks
   `;
 
   const url = wdk.sparqlQuery(sparql_query);
@@ -60,7 +60,7 @@ module.exports = Promise.coroutine(function* (params) {
   }
 
   return {
-    data: JSON.parse(_body)
+    data: wdk.simplifySparqlResults(_body)
   };
 
 });

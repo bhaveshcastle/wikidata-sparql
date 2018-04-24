@@ -24,7 +24,7 @@
       let query = {
         search_param: this.query
       };
-      this.query = null;
+      
       QueryService
         .Query(query)
         .then((response) => {
@@ -33,6 +33,8 @@
           $rootScope.showAlert(this, 'Response', query_data, 'Ok');
         }, (error) => {
           $rootScope.showAlert(this, 'Response', error.message, 'Ok');
+        }).then(() => {
+          // this.query = null;
         });
     };
 
