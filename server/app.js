@@ -27,7 +27,7 @@ const init = function(app) {
 
 
 const app = new Koa();
-const server = require('http2').createServer(app.callback());
+const server = require('http').createServer(app.callback());
 init(app);
 app.listen(config.PORT);
 console.log("Starting http server")
