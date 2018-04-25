@@ -102,12 +102,16 @@ module.exports = Promise.coroutine(function* (params) {
     return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS));
   }
 
+  const refinedSearchParam = searchParam.replace(/\w+/g, function(txt) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1);
+  }).replace(/\s+/g, ' ').trim();
+
   let url;
 
   if (type == 1) {
-    url = yield search_person_url({ person_name: searchParam });
+    url = yield search_person_url({ person_name: refinedSearchParam });
   } else if (type == 2) {
-    url = yield search_brand_url({ brand_name: searchParam });
+    url = yield search_brand_url({ brand_name: refinedSearchParam });
   } else {
     return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS));
   }
