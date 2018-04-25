@@ -103,7 +103,7 @@ module.exports = Promise.coroutine(function* (params) {
   }
 
   const refinedSearchParam = searchParam.replace(/\w+/g, function(txt) {
-    return txt.charAt(0).toUpperCase() + txt.substr(1);
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
   }).replace(/\s+/g, ' ').trim();
 
   let url;
