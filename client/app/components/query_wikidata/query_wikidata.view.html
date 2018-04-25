@@ -37,12 +37,24 @@
   <div style="border: 3px solid gray;width: 90%;margin: auto;margin-bottom:5px;" ng-repeat="data in vm.wikiData">
     <h2 style="text-align:center"> Wiki Info </h2>
     <div style="padding: 10px;" class="row">
-      <div style="padding: 10px" class="col-md-6" ng-repeat="row in data | limitTo: data.length/2 : 0">
-        <strong>{{row.key}} : </strong> {{row.value}}
+      <div style="padding: 10px" class="col-md-6" ng-repeat="row in data | limitTo: data.length : 0">
+        <div ng-if="row.key == 'Images'">
+          <strong>{{row.key}} : </strong>
+          <div ng-repeat="image in row.value">
+            <a href={{image}}>{{image}}</a>
+          </div>
+        </div>
+        <div ng-if="row.key != 'Images'">
+          <strong>{{row.key}} : </strong> {{row.value}}
+        </div>
       </div>
-      <div style="padding: 10px" class="col-md-6" ng-repeat="row in data | limitTo: data.length/2 + 1 : data.length /2">
+      <!-- <div style="padding: 10px" class="col-md-6" ng-repeat="row in data | limitTo: data.length/2 + 1 : data.length /2">
+        <div ng-if="row.key == Images">
+            here
+            <a href={{row.value}}>{{row.value}}</a>
+        </div>
         <strong>{{row.key}} : </strong>{{row.value}}
-      </div>
+      </div> -->
     </div>
 
   </div>

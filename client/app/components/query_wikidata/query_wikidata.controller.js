@@ -38,6 +38,9 @@
             query_data.map((row) => {
               let data = [];
               for (let key in row) {
+                if (key == "Images") {
+                  row.Images = row.Images.split(",");
+                }
                 data.push({ key, value: row[key] });  
               }
               vm.wikiData.push(data);
@@ -55,6 +58,7 @@
 
     vm.searchAgain = function (event) {
       vm.show_data = false;
+      vm.wikiData = [];
     }
   }
 

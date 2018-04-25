@@ -15,14 +15,14 @@ const search_person_url = Promise.coroutine(function* (params) {
 
   const sparql_query = `
   SELECT
-  ?item 
-  (?itemLabel AS ?itemText)
-  (GROUP_CONCAT(DISTINCT ?awardLabel; SEPARATOR = ", ") AS ?awards) 
-  (?genderLabel AS ?genderText)
-  (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ", ") AS ?images) 
-  ?description 
-  (COUNT(DISTINCT ?test) AS ?langPages)
-  ?sitelinks
+  (?item AS ?MID)
+  (?itemLabel AS ?Name)
+  (GROUP_CONCAT(DISTINCT ?awardLabel; SEPARATOR = ", ") AS ?Awards) 
+  (?genderLabel AS ?Gender)
+  (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ",") AS ?Images) 
+  (?description AS ?Description)
+  (COUNT(DISTINCT ?test) AS ?LanguagePagesInWikibase)
+  (?sitelinks AS ?SiteLinksInWikibase)
   WHERE {
     ?item wdt:P31 wd:Q5.
     ?item rdfs:label "${person_name}"@en.
@@ -43,7 +43,7 @@ const search_person_url = Promise.coroutine(function* (params) {
     FILTER((LANG(?description)) = "en")
     OPTIONAL { ?item wdt:P143 ?imported_from. }
   }
-  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?wikipedia ?langPages ?sitelinks
+  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?sitelinks
   `;
 
   const url = wdk.sparqlQuery(sparql_query);
@@ -58,25 +58,21 @@ const search_brand_url = Promise.coroutine(function* (params) {
 
   const sparql_query = `
   SELECT
-  ?item 
-  (?itemLabel AS ?itemText)
-  (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ", ") AS ?images) 
-  ?description 
-  (COUNT(DISTINCT ?test) AS ?langPages)
-  ?sitelinks
+  (?item AS ?MID) 
+  (?itemLabel AS ?Name)
+  (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ",") AS ?Images) 
+  (?description AS ?Description) 
+  (COUNT(DISTINCT ?test) AS ?LanguagePagesInWikibase)
+  (?sitelinks AS ?SiteLinksInWikibase)
   WHERE {
     ?item wdt:P31 wd:Q4830453.
     ?item rdfs:label "${brand_name}"@en.
-    OPTIONAL { ?item wdt:P166 ?award. }
-    OPTIONAL { ?item wdt:P21 ?gender. }
     OPTIONAL { ?item wdt:P18 ?image. }
     OPTIONAL { ?item schema:description ?description. }
     OPTIONAL { ?item schema:description ?test. }
     OPTIONAL { ?item wikibase:sitelinks ?sitelinks . }
     SERVICE wikibase:label {
       bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
-      ?award rdfs:label ?awardLabel.
-      ?gender rdfs:label ?genderLabel.
       ?item rdfs:label ?itemLabel.
       ?imported_from rdfs:label ?imported_fromLabel .
       ?test rdfs:label ?testLabel .
