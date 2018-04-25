@@ -4,7 +4,7 @@ const _query_wikidata = require('../../includes/query/query_wikidata.js');
 
 module.exports = function* (next) {
   const _query_result = yield _query_wikidata({
-    type: this._request.variables.type || 1,
+    type: this._request.variables.type,
     searchParam: this._request.variables.search_param
   });
   this.body = {

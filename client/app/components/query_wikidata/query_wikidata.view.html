@@ -1,6 +1,6 @@
 <nav-bar></nav-bar>
 <p></p>
-<div class="col-sm-8 col-sm-offset-2" style="text-align: center">
+<div class="col-sm-8 col-sm-offset-2" style="text-align: center" ng-if="vm.show_data == false">
   <div class='md-padding'>
     <md-card ng-repeat="action in vm.actions">
       <div class="custom-card" ng-if="action.key == 'query_wikidata'">
@@ -11,11 +11,39 @@
             <span class="input-group-addon" style="width: 20%;">Search Query</span>
             <input type="text" class="form-control" ng-model="vm.query">
           </div>
+          <div class="radio">
+            <label>
+              <input type="radio" ng-model="vm.searchType" value="1" checked>Person
+            </label>
+            <br>
+            <label>
+              <input type="radio" ng-model="vm.searchType" value="2">Brand
+            </label>
+          </div>
         </md-card-content>
         <div class="md-actions" layout="row" layout-align="center">
           <button type="button" class="btn btn-success" ng-click="vm.queryWikidata($event)">Search</button>
         </div>
       </div>
     </md-card>
+  </div>
+</div>
+<div ng-if="vm.show_data == true">
+  <div style="text-align:center">
+    <button type="button" class="btn btn-success" ng-click="vm.searchAgain($event)">Search Again</button>
+  </div>
+  <h2 style="text-align:center"> Total Records Found - {{vm.wikiData.length}} </h2>
+  <br/>
+  <div style="border: 3px solid gray;width: 90%;margin: auto;margin-bottom:5px;" ng-repeat="data in vm.wikiData">
+    <h2 style="text-align:center"> Wiki Info </h2>
+    <div style="padding: 10px;" class="row">
+      <div style="padding: 10px" class="col-md-6" ng-repeat="row in data | limitTo: data.length/2 : 0">
+        <strong>{{row.key}} : </strong> {{row.value}}
+      </div>
+      <div style="padding: 10px" class="col-md-6" ng-repeat="row in data | limitTo: data.length/2 + 1 : data.length /2">
+        <strong>{{row.key}} : </strong>{{row.value}}
+      </div>
+    </div>
+
   </div>
 </div>

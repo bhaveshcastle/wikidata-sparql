@@ -15,7 +15,8 @@
 
     function Query(params){
       const {
-        search_param
+        search_param,
+        type
       } = params;
       let req = {
         method: 'POST',
@@ -24,7 +25,8 @@
           "Content-Type": "application/json"
         },
         data: {
-          search_param: search_param
+          search_param,
+          type
         }
       };
       return HttpService.http(req).then((response) => {

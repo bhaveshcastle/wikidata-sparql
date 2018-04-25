@@ -97,7 +97,6 @@ module.exports = Promise.coroutine(function* (params) {
     type, // 1 - Person, 2 - Brand
     searchParam
   } = params;
-  console.log(params);
   if (!searchParam || type == undefined) {
     return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS));
   }
