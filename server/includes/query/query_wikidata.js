@@ -2,6 +2,7 @@
 
 const Promise       = require('bluebird') ;
 const request       = require('request')  ;
+const numeral       = require('numeral')  ;
 const wdk           = require('wikidata-sdk');
 const config        = require('../config.js')             ;
 const error_handler = require('../misc/error_handler.js') ;
@@ -62,11 +63,17 @@ const search_brand_url = Promise.coroutine(function* (params) {
   (?itemLabel AS ?Name)
   (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ",") AS ?Images) 
   (?description AS ?Description) 
+  (?logo AS ?Logo)
+  (?employees AS ?NumEmployees)
+  (?total_revenue AS ?TotalRevenue)
   (COUNT(DISTINCT ?test) AS ?LanguagePagesInWikibase)
   (?sitelinks AS ?SiteLinksInWikibase)
   WHERE {
     ?item wdt:P31 wd:Q4830453.
     ?item rdfs:label "${brand_name}"@en.
+    OPTIONAL { ?item wdt:P154 ?logo. }
+    OPTIONAL { ?item wdt:P1128 ?employees. }
+    OPTIONAL { ?item wdt:P2139 ?total_revenue. }
     OPTIONAL { ?item wdt:P18 ?image. }
     OPTIONAL { ?item schema:description ?description. }
     OPTIONAL { ?item schema:description ?test. }
@@ -80,7 +87,7 @@ const search_brand_url = Promise.coroutine(function* (params) {
     FILTER((LANG(?description)) = "en")
     OPTIONAL { ?item wdt:P143 ?imported_from. }
   }
-  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?wikipedia ?langPages ?sitelinks
+  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?sitelinks ?logo ?employees ?total_revenue
   `;
 
   const url = wdk.sparqlQuery(sparql_query);
@@ -116,9 +123,15 @@ module.exports = Promise.coroutine(function* (params) {
   if (!_res || !_body) {
     return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
   }
-
+  var parsedResult = wdk.simplifySparqlResults(_body);
+  if (type == 2) { // Only for brand
+    parsedResult.map((row) => {
+      row.TotalRevenue = row.TotalRevenue > 0 ? '$' + numeral(row.TotalRevenue).format('0,0') : '-';
+      row.NumEmployees = row.NumEmployees > 0 ? numeral(row.NumEmployees).format('0,0') : '-';
+    })
+  }  
   return {
-    data: wdk.simplifySparqlResults(_body)
+    data: parsedResult
   };
 
 });
