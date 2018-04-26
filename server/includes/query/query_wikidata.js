@@ -16,7 +16,7 @@ const search_person_url = Promise.coroutine(function* (params) {
 
   const sparql_query = `
   SELECT
-  (?item AS ?MID)
+  (?Freebase_ID AS ?MID)
   (?itemLabel AS ?Name)
   (GROUP_CONCAT(DISTINCT ?awardLabel; SEPARATOR = ", ") AS ?Awards) 
   (?genderLabel AS ?Gender)
@@ -33,6 +33,7 @@ const search_person_url = Promise.coroutine(function* (params) {
     OPTIONAL { ?item schema:description ?description. }
     OPTIONAL { ?item schema:description ?test. }
     OPTIONAL { ?item wikibase:sitelinks ?sitelinks . }
+    OPTIONAL { ?item wdt:P646 ?Freebase_ID. }
     SERVICE wikibase:label {
       bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
       ?award rdfs:label ?awardLabel.
@@ -44,7 +45,7 @@ const search_person_url = Promise.coroutine(function* (params) {
     FILTER((LANG(?description)) = "en")
     OPTIONAL { ?item wdt:P143 ?imported_from. }
   }
-  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?sitelinks
+  GROUP BY ?Freebase_ID ?itemLabel ?gender ?genderLabel ?description ?sitelinks
   `;
 
   const url = wdk.sparqlQuery(sparql_query);
@@ -59,7 +60,7 @@ const search_brand_url = Promise.coroutine(function* (params) {
 
   const sparql_query = `
   SELECT
-  (?item AS ?MID) 
+  (?Freebase_ID AS ?MID) 
   (?itemLabel AS ?Name)
   (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ",") AS ?Images) 
   (?description AS ?Description) 
@@ -78,6 +79,7 @@ const search_brand_url = Promise.coroutine(function* (params) {
     OPTIONAL { ?item schema:description ?description. }
     OPTIONAL { ?item schema:description ?test. }
     OPTIONAL { ?item wikibase:sitelinks ?sitelinks . }
+    OPTIONAL { ?item wdt:P646 ?Freebase_ID. }
     SERVICE wikibase:label {
       bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
       ?item rdfs:label ?itemLabel.
@@ -87,7 +89,7 @@ const search_brand_url = Promise.coroutine(function* (params) {
     FILTER((LANG(?description)) = "en")
     OPTIONAL { ?item wdt:P143 ?imported_from. }
   }
-  GROUP BY ?item ?itemLabel ?gender ?genderLabel ?description ?sitelinks ?logo ?employees ?total_revenue
+  GROUP BY ?Freebase_ID ?itemLabel ?gender ?genderLabel ?description ?sitelinks ?logo ?employees ?total_revenue
   `;
 
   const url = wdk.sparqlQuery(sparql_query);
@@ -123,13 +125,24 @@ module.exports = Promise.coroutine(function* (params) {
   if (!_res || !_body) {
     return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
   }
-  var parsedResult = wdk.simplifySparqlResults(_body);
+  let parsedResult;
+  try {
+    parsedResult = wdk.simplifySparqlResults(_body);
+  } catch (err) {
+    console.log(err);
+    return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
+  }
+  parsedResult.map((row) => {
+    if (row.MID) {
+      row.MID = row.MID.substr(1).replace('/', '.')
+    }
+  });
   if (type == 2) { // Only for brand
     parsedResult.map((row) => {
       row.TotalRevenue = row.TotalRevenue > 0 ? '$' + numeral(row.TotalRevenue).format('0,0') : '-';
       row.NumEmployees = row.NumEmployees > 0 ? numeral(row.NumEmployees).format('0,0') : '-';
     })
-  }  
+  }
   return {
     data: parsedResult
   };
