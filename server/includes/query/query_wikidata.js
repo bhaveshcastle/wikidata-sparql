@@ -97,6 +97,57 @@ const search_brand_url = Promise.coroutine(function* (params) {
   return url;
 });
 
+const search_using_mid = Promise.coroutine(function* (params) {
+  let {
+    mid
+  } = params;
+
+  mid = '/' + mid.replace('.', '/')
+
+  const sparql_query = `
+  SELECT
+  (?Freebase_ID AS ?MID) 
+  (?itemLabel AS ?Name)
+  (?description AS ?Description) 
+  (?genderLabel AS ?Gender)
+  (GROUP_CONCAT(DISTINCT ?awardLabel; SEPARATOR = ", ") AS ?Awards) 
+  (GROUP_CONCAT(DISTINCT ?image; SEPARATOR = ",") AS ?Images) 
+  (?logo AS ?Logo)
+  (?employees AS ?NumEmployees)
+  (?total_revenue AS ?TotalRevenue)
+  (COUNT(DISTINCT ?test) AS ?LanguagePagesInWikibase)
+  (?sitelinks AS ?SiteLinksInWikibase)
+  WHERE {
+    ?item wdt:P646 "${mid}".
+    OPTIONAL { ?item wdt:P166 ?award. }
+    OPTIONAL { ?item wdt:P21 ?gender. }
+    OPTIONAL { ?item wdt:P154 ?logo. }
+    OPTIONAL { ?item wdt:P1128 ?employees. }
+    OPTIONAL { ?item wdt:P2139 ?total_revenue. }
+    OPTIONAL { ?item wdt:P18 ?image. }
+    OPTIONAL { ?item schema:description ?description. }
+    OPTIONAL { ?item schema:description ?test. }
+    OPTIONAL { ?item wikibase:sitelinks ?sitelinks . }
+    OPTIONAL { ?item wdt:P646 ?Freebase_ID. }
+    SERVICE wikibase:label {
+      bd:serviceParam wikibase:language "[AUTO_LANGUAGE],en".
+      ?award rdfs:label ?awardLabel.
+      ?gender rdfs:label ?genderLabel.
+      ?item rdfs:label ?itemLabel.
+      ?imported_from rdfs:label ?imported_fromLabel .
+      ?test rdfs:label ?testLabel .
+    }
+    FILTER((LANG(?description)) = "en")
+    OPTIONAL { ?item wdt:P143 ?imported_from. }
+  }
+  GROUP BY ?Freebase_ID ?itemLabel ?gender ?genderLabel ?description ?sitelinks ?logo ?employees ?total_revenue
+  `;
+
+  const url = wdk.sparqlQuery(sparql_query);
+
+  return url;
+});
+
 module.exports = Promise.coroutine(function* (params) {
   const {
     type, // 1 - Person, 2 - Brand
@@ -116,6 +167,8 @@ module.exports = Promise.coroutine(function* (params) {
     url = yield search_person_url({ person_name: refinedSearchParam });
   } else if (type == 2) {
     url = yield search_brand_url({ brand_name: refinedSearchParam });
+  } else if (type == 3) {
+    url = yield search_using_mid({ mid: searchParam });
   } else {
     return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS));
   }
@@ -133,16 +186,17 @@ module.exports = Promise.coroutine(function* (params) {
     return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
   }
   parsedResult.map((row) => {
+    row.TotalRevenue = row.TotalRevenue && row.TotalRevenue > 0 && '$' + numeral(row.TotalRevenue).format('0,0') ;
+    row.NumEmployees = row.NumEmployees && row.NumEmployees > 0 && numeral(row.NumEmployees).format('0,0');
+    for (let key in row) {
+      if (!row[key] || row[key] == "") {
+        delete row[key];
+      }
+    }
     if (row.MID) {
       row.MID = row.MID.substr(1).replace('/', '.')
     }
   });
-  if (type == 2) { // Only for brand
-    parsedResult.map((row) => {
-      row.TotalRevenue = row.TotalRevenue > 0 ? '$' + numeral(row.TotalRevenue).format('0,0') : '-';
-      row.NumEmployees = row.NumEmployees > 0 ? numeral(row.NumEmployees).format('0,0') : '-';
-    })
-  }
   return {
     data: parsedResult
   };
