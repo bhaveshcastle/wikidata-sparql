@@ -31,4 +31,4 @@ CREATE TABLE IF NOT EXISTS ds_image_data (
 );
 GRANT ALL PRIVILEGES ON TABLE ds_image_data TO ds_user ;
 CREATE UNIQUE INDEX CONCURRENTLY ds_image_data_image_url_type_label ON ds_image_data (image_url, type, label_id) ;
-CREATE INDEX CONCURRENTY ON ds_image_data (label_id) ;
+CREATE INDEX CONCURRENTLY ON ds_image_data (created_at DESC);

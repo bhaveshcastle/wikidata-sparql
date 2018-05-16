@@ -11,10 +11,10 @@ router.post('/api/v1/query', form_parser(), web_middleware, require('./requests/
 
 router.get('/api/v1/get_all_datasets', form_parser(), web_middleware, require('./requests/get_all_datasets.js'));
 router.get('/api/v1/get_all_labels', form_parser(), web_middleware, require('./requests/get_all_labels.js'));
-
 router.post('/api/v1/create_dataset', form_parser(), web_middleware, require('./requests/create_dataset.js'));
 router.post('/api/v1/create_label', form_parser(), web_middleware, require('./requests/create_label.js'));
-//router.get('/api/v1/fetch_dataset', form_parser(), web_middleware, require('./requests/fetch_dataset.js'));
+router.put('/api/v1/save_data', form_parser(), web_middleware, require('./requests/insert_data.js'));
+router.get('/api/v1/fetch_data', form_parser(), web_middleware, require('./requests/fetch_data.js'));
 
 
 router.get('/', function* () {
