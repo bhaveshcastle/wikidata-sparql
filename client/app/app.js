@@ -2,7 +2,7 @@
   'use strict';
 
   angular
-    .module('app', ['ngRoute', 'ngCookies', 'ngMaterial'])
+    .module('app', ['ngRoute', 'ngCookies', 'ngMaterial', 'ui.bootstrap'])
     .config(config)
     .run(run);
 
@@ -18,6 +18,12 @@
       .when('/query', {
         controller: 'QueryWikidataController',
         templateUrl: 'components/query_wikidata/query_wikidata.view.html',
+        controllerAs: 'vm'
+      })
+
+      .when('/image_dataset', {
+        controller: 'ImageDatasetController',
+        templateUrl: 'components/image_dataset/image_dataset.view.html',
         controllerAs: 'vm'
       })
 

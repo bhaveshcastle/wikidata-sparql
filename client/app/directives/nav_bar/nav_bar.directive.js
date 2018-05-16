@@ -16,6 +16,10 @@
           "query_wikidata": {
             key: "query_wikidata",
             url: "/query"
+          },
+          "image_dataset": {
+            key: "image_dataset",
+            url: "/image_dataset"
           }
         };
         let obj = url_mappings[key];

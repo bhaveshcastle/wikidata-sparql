@@ -1,0 +1,99 @@
+<nav-bar></nav-bar>
+<p></p>
+
+<div>
+  <uib-tabset active="activeJustified" justified="true">
+    <uib-tab index="0" heading="Datasets">
+      <div class="col-sm-8 col-sm-offset-2">
+        <br>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" placeholder="Enter Dataset Name" ng-model="vm.newDatasetName">
+        </div>
+        <div class="col-sm-2">
+          <button type="button" class="btn btn-success" ng-click="vm.add_dataset(vm.newDatasetName)">Add Dataset</button>
+        </div>
+      </div>
+      <h4 ng-if="vm.dataset_list.length == 0" style="text-align: center !important;">
+        No data available
+      </h4>
+      <table ng-if="vm.dataset_list.length > 0" class="table table-striped table-condensed table-hover">
+        <thead>
+          <tr>
+            <th class="spam_url">Id</th>
+            <th class="count">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in vm.dataset_list">
+            <td>{{item.id}}</td>
+            <td>{{item.name}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </uib-tab>
+    <uib-tab index="1" heading="Labels">
+      <div class="col-sm-8 col-sm-offset-2">
+        <br>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" placeholder="Enter Label Name" ng-model="vm.newLabelName">
+        </div>
+        <div class="col-sm-2">
+          <button type="button" class="btn btn-success" ng-click="vm.whitelist_url(vm.newLabelName)">Add Label</button>
+        </div>
+      </div>
+      <br>
+      <div ng-if="vm.label_list.length == 0">
+        <h4 style="text-align: center !important;">
+          No data available
+        </h4>
+      </div>
+      <table ng-if="vm.label_list.length > 0" class="table table-striped table-condensed table-hover">
+        <thead>
+          <tr>
+            <th class="spam_url">Id</th>
+            <th class="count">Name</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in vm.label_list">
+            <td>{{item.id}}</td>
+            <td>{{item.name}}</td>
+          </tr>
+        </tbody>
+      </table>
+    </uib-tab>
+    <uib-tab index="2" heading="Add image dataset/label">
+      <div class="col-sm-8 col-sm-offset-2">
+        <br>
+        <div class="col-sm-6">
+          <input type="text" class="form-control" placeholder="Enter Url to Blacklist" ng-model="vm.newBlacklistUrl">
+        </div>
+        <div class="col-sm-2">
+          <button type="button" class="btn btn-success" ng-click="vm.blacklist_url(vm.newBlacklistUrl)">Add New Url</button>
+        </div>
+      </div>
+      <br>
+      <div ng-if="vm.blacklist_urls.length == 0">
+        <h4 style="text-align: center !important;">
+          No data available
+        </h4>
+      </div>
+
+      <table ng-if="vm.blacklist_urls.length > 0" class="table table-striped table-condensed table-hover">
+        <thead>
+          <tr>
+            <th class="spam_url">Spam Url</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="item in vm.blacklist_urls">
+            <td>{{item.spam_url}}</td>
+            <td>
+              <button type="button" class="btn btn-danger" ng-click="vm.revertBlacklistUrl(item.spam_url)">Remove</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </uib-tab>
+  </uib-tabset>
+</div>
