@@ -8,86 +8,55 @@
   ImageDatasetController.$inject = ['ImageDatasetService', '$rootScope', '$mdDialog'];
   function ImageDatasetController(ImageDatasetService, $rootScope, $mdDialog) {
     let vm = this;
-    vm.spam_url_list = [];
-    vm.whitelist_urls = [];
-    vm.blacklist_urls = [];
-    vm.detect_url_regex = "";// = [];
+    vm.dataset_list = [];
+    vm.label_list = [];
+    vm.newLabelDataset;
     vm.user = $rootScope.userData;
 
-    vm.ban_logic_actions = [
-      {
-        key: "ban_regex",
-        name: "Ban Regex",
-        description: "Logic being used to ban users"
-      }
-    ];
+    fetch_datasets();
 
-    fetch_bot_ban_data();
-
-    function fetch_bot_ban_data() {
-    //   ImageDatasetService
-    //     .fetchBotBanData()
-    //     .then((response) => {
-    //       vm.spam_url_list = response.data.spam_url_list;
-    //       vm.whitelist_urls = response.data.whitelist_urls;
-    //       vm.blacklist_urls = response.data.blacklist_urls;
-    //       vm.bot_ban_regex = response.data.bot_ban_regex;
-    //     }, (error) => {
-    //       showAlert(null, 'Response', error.message, 'Ok');
-    //     });
+    function fetch_datasets() {
+      ImageDatasetService
+        .fetchDatasets()
+        .then((response) => {
+          vm.dataset_list = response.data;
+          if(vm.dataset_list.length){
+            vm.newLabelDataset = vm.dataset_list[0];
+          }
+        }, (error) => {
+          showAlert(null, 'Response', error.message, 'Ok');
+        });
     }
 
-    vm.blacklist_url = function (url) {
+    vm.add_dataset = function (dataset_name) {
       ImageDatasetService
-      .blacklistSpamUrl(url)
+      .addDataset(dataset_name)
       .then((response) => {
-        fetch_bot_ban_data();
+        vm.newDatasetName = '';
+        fetch_datasets();
       }, (error) => {
         showAlert(null, 'Response', error.message, 'Ok');
       });
     };
 
-    vm.add_dataset = function (url) {
+    vm.fetch_labels = function () {
       ImageDatasetService
-      .whitelistSpamUrl(url)
-      .then((response) => {
-        fetch_bot_ban_data();
-      }, (error) => {
-        showAlert(null, 'Response', error.message, 'Ok');
-      });
-    };
+        .fetchLabels()
+        .then((response) => {
+          vm.label_list = response.data;
+        }, (error) => {
+          showAlert(null, 'Response', error.message, 'Ok');
+        });
+    }
 
-    vm.updateBanRegex = function () {
+    vm.add_label = function (label_name, dataset) {
+      let dataset_id = dataset.id;
       ImageDatasetService
-      .updateBanRegex(vm.bot_ban_regex)
+      .addLabel(label_name, dataset_id)
       .then((response) => {
-        fetch_bot_ban_data();
-      }, (error) => {
-        showAlert(null, 'Response', error.message, 'Ok');
-      });
-    };
-
-    vm.revertBlacklistUrl = function (url) {
-      ImageDatasetService
-      .revertSpamUrl({
-        spam_url: url
-        , type: 'black'
-        })
-      .then((response) => {
-        fetch_bot_ban_data();
-      }, (error) => {
-        showAlert(null, 'Response', error.message, 'Ok');
-      });
-    };
-
-    vm.revertWhitelistUrl = function (url) {
-      ImageDatasetService
-      .revertSpamUrl({
-        spam_url: url
-        , type: 'white'
-        })
-      .then((response) => {
-        fetch_bot_ban_data();
+        vm.newLabelName = '';
+        vm.newLabelDataset = vm.dataset_list[0];
+        vm.fetch_labels();
       }, (error) => {
         showAlert(null, 'Response', error.message, 'Ok');
       });

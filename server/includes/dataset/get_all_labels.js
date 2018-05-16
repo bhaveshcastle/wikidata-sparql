@@ -14,15 +14,16 @@ module.exports = Promise.coroutine(function* (params) {
 
   let dataset_filter = '';
   if (dataset_id) {
-    dataset_filter = `WHERE type = ${dataset_id}`;
+    dataset_filter = `WHERE a.type = ${dataset_id}`;
   }
   
   let labels = yield Promise.using(postgres.getConnection()
     , conn => {
-      return conn.query(`SELECT id, label, type
-                        FROM ds_label 
+      return conn.query(`SELECT a.id, a.label, a.type, b.name AS dataset_name
+                        FROM ds_label a
+                        JOIN ds_type b ON b.id = a.type
                         ${dataset_filter}
-                        ORDER BY label`
+                        ORDER BY a.label`
         , { });
     });
 

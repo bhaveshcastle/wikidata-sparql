@@ -9,17 +9,16 @@
   function ImageDatasetService($http, $rootScope, $location, HttpService) {
     let service = {};
 
-    service.fetchBotBanData = fetchBotBanData;
-    service.whitelistSpamUrl = whitelistSpamUrl;
-    service.blacklistSpamUrl = blacklistSpamUrl;
-    service.revertSpamUrl = revertSpamUrl;
-    service.updateBanRegex = updateBanRegex;
+    service.fetchDatasets = fetchDatasets;
+    service.addDataset = addDataset;
+    service.fetchLabels = fetchLabels;
+    service.addLabel = addLabel;
     return service;
 
-    function fetchBotBanData() {
+    function fetchDatasets() {
       let req = {
         method: 'GET',
-        url: '/admin/api/v1/bot_ban_data',
+        url: '/api/v1/get_all_datasets',
         headers: {
           "Content-Type": "application/json",
           //"x-login-token": $rootScope.userData.loginToken
@@ -33,16 +32,54 @@
       });
     }
 
-    function whitelistSpamUrl(url) {
+    function addDataset(dataset_name) {
       let req = {
         method: 'POST',
-        url: '/admin/api/v1/whitelist_spam_url',
+        url: '/api/v1/create_dataset',
         headers: {
           "Content-Type": "application/json",
           //"x-login-token": $rootScope.userData.loginToken
         },
         data: {
-          spam_url: url 
+          dataset_name: dataset_name 
+        }
+      };
+      return HttpService.http(req).then((response) => {
+        if (response.success) {
+          response.message = "Data fetched successfully";
+        }
+        return response;
+      });
+    }
+
+    function fetchLabels() {
+      let req = {
+        method: 'GET',
+        url: '/api/v1/get_all_labels',
+        headers: {
+          "Content-Type": "application/json",
+          //"x-login-token": $rootScope.userData.loginToken
+        }
+      };
+      return HttpService.http(req).then((response) => {
+        if (response.success) {
+          response.message = "Data fetched successfully";
+        }
+        return response;
+      });
+    }
+
+    function addLabel(label_name, dataset_id) {
+      let req = {
+        method: 'POST',
+        url: '/api/v1/create_label',
+        headers: {
+          "Content-Type": "application/json",
+          //"x-login-token": $rootScope.userData.loginToken
+        },
+        data: {
+          label: label_name,
+          ds_type: dataset_id
         }
       };
       return HttpService.http(req).then((response) => {

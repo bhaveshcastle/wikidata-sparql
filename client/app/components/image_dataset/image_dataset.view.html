@@ -26,19 +26,22 @@
         <tbody>
           <tr ng-repeat="item in vm.dataset_list">
             <td>{{item.id}}</td>
-            <td>{{item.name}}</td>
+            <td>{{item.dataset_name}}</td>
           </tr>
         </tbody>
       </table>
     </uib-tab>
-    <uib-tab index="1" heading="Labels">
-      <div class="col-sm-8 col-sm-offset-2">
+    <uib-tab index="1" heading="Labels" ng-click="vm.fetch_labels()">
+      <div class="col-sm-10 col-sm-offset-2">
         <br>
+        <div class="col-sm-2">
+            <select class="form-control" data-ng-options="o.dataset_name for o in vm.dataset_list" data-ng-model="vm.newLabelDataset"></select>
+        </div>
         <div class="col-sm-6">
           <input type="text" class="form-control" placeholder="Enter Label Name" ng-model="vm.newLabelName">
         </div>
         <div class="col-sm-2">
-          <button type="button" class="btn btn-success" ng-click="vm.whitelist_url(vm.newLabelName)">Add Label</button>
+          <button type="button" class="btn btn-success" ng-click="vm.add_label(vm.newLabelName, vm.newLabelDataset)">Add Label</button>
         </div>
       </div>
       <br>
@@ -52,12 +55,14 @@
           <tr>
             <th class="spam_url">Id</th>
             <th class="count">Name</th>
+            <th class="count">Dataset Name</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="item in vm.label_list">
             <td>{{item.id}}</td>
-            <td>{{item.name}}</td>
+            <td>{{item.label}}</td>
+            <td>{{item.dataset_name}}</td>
           </tr>
         </tbody>
       </table>
