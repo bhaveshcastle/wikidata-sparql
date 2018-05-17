@@ -13,6 +13,8 @@
     service.addDataset = addDataset;
     service.fetchLabels = fetchLabels;
     service.addLabel = addLabel;
+    service.fetchLabelsForDataset = fetchLabelsForDataset;
+    service.labelImage = labelImage;
     return service;
 
     function fetchDatasets() {
@@ -69,6 +71,26 @@
       });
     }
 
+    function fetchLabelsForDataset(type) {
+      let req = {
+        method: 'GET',
+        url: '/api/v1/get_all_labels',
+        headers: {
+          "Content-Type": "application/json",
+          //"x-login-token": $rootScope.userData.loginToken
+        },
+        params: {
+          type: type
+        }
+      };
+      return HttpService.http(req).then((response) => {
+        if (response.success) {
+          response.message = "Data fetched successfully";
+        }
+        return response;
+      });
+    }
+
     function addLabel(label_name, dataset_id) {
       let req = {
         method: 'POST',
@@ -79,6 +101,28 @@
         },
         data: {
           label: label_name,
+          ds_type: dataset_id
+        }
+      };
+      return HttpService.http(req).then((response) => {
+        if (response.success) {
+          response.message = "Data fetched successfully";
+        }
+        return response;
+      });
+    }
+
+    function labelImage(image_url, dataset_id, labels) {
+      let req = {
+        method: 'PUT',
+        url: '/api/v1/save_data',
+        headers: {
+          "Content-Type": "application/json",
+          //"x-login-token": $rootScope.userData.loginToken
+        },
+        data: {
+          url: image_url,
+          labels: JSON.stringify(labels),
           ds_type: dataset_id
         }
       };
