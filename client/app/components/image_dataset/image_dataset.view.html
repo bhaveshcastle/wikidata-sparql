@@ -3,7 +3,7 @@
 
 <div>
   <uib-tabset active="activeJustified" justified="true">
-    <uib-tab index="0" heading="Image dataset/label" ng-click="vm.fetch_datasets()">
+    <uib-tab index="0" heading="Add Image dataset/label" ng-click="vm.fetch_datasets()">
       <div class="col-sm-8 col-sm-offset-2">
         <br>
         <div class="col-sm-5">
@@ -25,30 +25,65 @@
           <button type="button" class="btn btn-success" ng-click="vm.label_image(vm.newImageUrl, vm.newImageDataset, vm.selectedLabels)">Add</button>
         </div>
       </div>
-      <br>
-      <div ng-if="vm.blacklist_urls.length == 0">
-        <h4 style="text-align: center !important;">
-          No data available
-        </h4>
-      </div>
+    </uib-tab>
+    <uib-tab index="1" heading="View Image dataset/label" ng-click="vm.fetch_datasets()">
+      <div class="col-sm-8 col-sm-offset-2">
+        <br>
+        <div class="col-sm-4">
+          <select style="width:100%;" class="form-control" data-ng-options="o.dataset_name for o in vm.dataset_list" data-ng-model="vm.viewImageDataset" ng-change="vm.get_labels_for_dataset(vm.viewImageDataset)"></select>
+        </div>
 
-      <table ng-if="vm.blacklist_urls.length > 0" class="table table-striped table-condensed table-hover">
+        <div class="col-sm-4">
+          <md-input-container style="margin-top:-1px;width:100%;">
+            <md-select class="form-control" multiple ng-model="vm.selectedLabelsView" placeholder="Select Lables">
+              <md-option ng-repeat="x in vm.label_list_for_dataset_view" value="{{x.id}}">{{x.label}}</md-option>
+            </md-select>
+          </md-input-container>
+        </div>
+
+        <div class="col-sm-2" style="margin-left:10px;">
+          <button type="button" class="btn btn-success" ng-click="vm.find_images(vm.viewImageDataset, vm.selectedLabelsView)">Search</button>
+        </div>
+      </div>
+      <table class="table table-striped table-condensed table-hover">
         <thead>
-          <tr>
-            <th class="spam_url">Spam Url</th>
-          </tr>
+            <tr>
+                <th class="reference_id" ng-click="sort_by(order, vm.viewImageDataset, vm.selectedLabelsView)" custom-sort order="'reference_id'" sort="sort">#</th>
+                <th class="ban_start">Image</th>
+                <th class="user_id">Label</th>
+            </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="item in vm.blacklist_urls">
-            <td>{{item.spam_url}}</td>
-            <td>
-              <button type="button" class="btn btn-danger" ng-click="vm.revertBlacklistUrl(item.spam_url)">Remove</button>
-            </td>
-          </tr>
+            <tr ng-click="redirectUrl(item.user_id)" ng-repeat="item in fetchedImages | orderBy:sort.sortingOrder:sort.reverse">
+                <td>{{item.created_at_epoch}}</td>
+                <td>{{item.image_url}}</td>
+                <td>{{item.label_id}}</td>
+            </tr>
         </tbody>
+        <tfoot>
+            <td colspan="9">
+                <div style="text-align: center">
+                    <div class="pagination">
+                        <ul>
+                            <li ng-class="{disabled: currentPage == 0}">
+                                <a href ng-click="prevPage(vm.viewImageDataset, vm.selectedLabelsView)">« Prev</a>
+                            </li>
+
+                            <li ng-class="{active}">
+                                <a href ng-bind="currentPage + 1">1</a>
+                            </li>
+
+                            <li ng-class="{disabled: next_end == true}">
+                                <a href ng-click="nextPage(vm.viewImageDataset, vm.selectedLabelsView)">Next »</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </td>
+        </tfoot>
       </table>
     </uib-tab>
-    <uib-tab index="1" heading="Datasets">
+    <uib-tab index="2" heading="Datasets">
       <div class="col-sm-8 col-sm-offset-2">
         <br>
         <div class="col-sm-6">
@@ -76,7 +111,7 @@
         </tbody>
       </table>
     </uib-tab>
-    <uib-tab index="2" heading="Labels" ng-click="vm.fetch_labels()">
+    <uib-tab index="3" heading="Labels" ng-click="vm.fetch_labels()">
       <div class="col-sm-10 col-sm-offset-2">
         <br>
         <div class="col-sm-2">

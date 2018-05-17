@@ -15,6 +15,7 @@
     service.addLabel = addLabel;
     service.fetchLabelsForDataset = fetchLabelsForDataset;
     service.labelImage = labelImage;
+    service.fetchImages = fetchImages;
     return service;
 
     function fetchDatasets() {
@@ -134,16 +135,21 @@
       });
     }
 
-    function blacklistSpamUrl(url) {
+    function fetchImages(dataset_id, labels, config) {
       let req = {
-        method: 'POST',
-        url: '/admin/api/v1/blacklist_spam_url',
+        method: 'GET',
+        url: '/api/v1/fetch_data',
         headers: {
           "Content-Type": "application/json",
           //"x-login-token": $rootScope.userData.loginToken
         },
-        data: {
-          spam_url: url 
+        params: {
+          ds_type: dataset_id,
+          labels: JSON.stringify(labels),
+          page_size: config.page_size,
+          sorting_order: config.sorting_order,
+          offset_type: config.offset_type,
+          reference: config.reference
         }
       };
       return HttpService.http(req).then((response) => {
@@ -153,46 +159,5 @@
         return response;
       });
     }
-
-    function revertSpamUrl(data) {
-      let req = {
-        method: 'POST',
-        url: '/admin/api/v1/revert_spam_url',
-        headers: {
-          "Content-Type": "application/json",
-          //"x-login-token": $rootScope.userData.loginToken
-        },
-        data
-      };
-      return HttpService.http(req).then((response) => {
-        if (response.success) {
-          response.message = "Data fetched successfully";
-        }
-        return response;
-      });
-    }
-
-    function updateBanRegex(updated_regex) {
-      let req = {
-        method: 'PUT',
-        url: '/admin/api/v1/update_ban_regex',
-        headers: {
-          "Content-Type": "application/json",
-          //"x-login-token": $rootScope.userData.loginToken
-        },
-        data: {
-          updated_regex
-        }
-      };
-      return HttpService.http(req).then((response) => {
-        if (response.success) {
-          response.message = "Data fetched successfully";
-        }
-        return response;
-      });
-    }
-
-
   }
-
 })();
