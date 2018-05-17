@@ -24,10 +24,10 @@
       reverse: false
     };
 
-    $scope.next_end = false;
+    $scope.next_end = true;
 
     $scope.config = {
-      page_size: 1,
+      page_size: 50,
       reference: Number.MAX_SAFE_INTEGER,
       sorting_order: "DESC",
       offset_type: "next"
@@ -41,6 +41,13 @@
     $scope.currentPage = 0;
 
     vm.find_images = function (dataset, labels){
+      $scope.next_end = true;
+      $scope.config = {
+        page_size: 50,
+        reference: Number.MAX_SAFE_INTEGER,
+        sorting_order: "DESC",
+        offset_type: "next"
+      };
       if(!dataset){
         showAlert(null, 'Invalid Input', 'Please enter dataset', 'Ok');
       }
@@ -50,10 +57,11 @@
       .then((response) => {
         console.log(response.data);
         $scope.fetchedImages = response.data;
+        $scope.next_end = false;
         $scope.config.reference =
           response.data &&
           response.data.length ?
-          response.data[response.data.length - 1].created_at_epoch : $scope.config.sorting_order == 'ASC' ? Number.MAX_SAFE_INTEGER : 0;
+          response.data[response.data.length - 1].id : $scope.config.sorting_order == 'ASC' ? Number.MAX_SAFE_INTEGER : 0;
         if (response.data.length < $scope.config.page_size) {
           $scope.next_end = true;
         }
@@ -81,7 +89,7 @@
       if ($scope.currentPage <= 0) { return; }
       $scope.next_end = false;
       $scope.currentPage--;
-      $scope.config.reference = $scope.fetchedImages.length ? $scope.fetchedImages[0].created_at_epoch : $scope.config.reference;
+      $scope.config.reference = $scope.fetchedImages.length ? $scope.fetchedImages[0].id : $scope.config.reference;
       $scope.config.offset_type = 'prev';
       vm.find_images(dataset, labels);
     };
@@ -108,6 +116,26 @@
             vm.viewImageDataset = vm.dataset_list[0];
             vm.get_labels_for_dataset(vm.newImageDataset);
             vm.get_labels_for_dataset(vm.viewImageDataset);
+            $scope.sort = {
+              sortingOrder: "id",
+              reverse: false
+            };
+
+            $scope.next_end = true;
+
+            $scope.config = {
+              page_size: 50,
+              reference: Number.MAX_SAFE_INTEGER,
+              sorting_order: "DESC",
+              offset_type: "next"
+            };
+
+            $scope.gap = 5;
+            $scope.fetchedImages = [];
+            $scope.filteredItems = [];
+            $scope.groupedItems = [];
+            $scope.pagedItems = [];
+            $scope.currentPage = 0;
           }
         }, (error) => {
           showAlert(null, 'Response', error.message, 'Ok');
@@ -152,6 +180,14 @@
 
     vm.get_labels_for_dataset = function (dataset) {
       let dataset_id = dataset.id;
+      $scope.next_end = true;
+      $scope.config = {
+        page_size: 50,
+        reference: Number.MAX_SAFE_INTEGER,
+        sorting_order: "DESC",
+        offset_type: "next"
+      };
+      $scope.fetchedImages = [];
       ImageDatasetService
         .fetchLabelsForDataset(dataset_id)
         .then((response) => {

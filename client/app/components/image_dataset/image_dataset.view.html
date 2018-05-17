@@ -55,8 +55,8 @@
         </thead>
         <tbody>
             <tr ng-click="redirectUrl(item.user_id)" ng-repeat="item in fetchedImages | orderBy:sort.sortingOrder:sort.reverse">
-                <td>{{item.created_at_epoch}}</td>
-                <td>{{item.image_url}}</td>
+                <td>{{item.id}}</td>
+                <td><img ng-src="{{item.image_url}}" style="width:200px;height:200px;"></td>
                 <td>{{item.label_id}}</td>
             </tr>
         </tbody>
