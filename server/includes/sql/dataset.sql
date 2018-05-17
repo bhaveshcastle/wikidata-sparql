@@ -23,6 +23,7 @@ GRANT ALL PRIVILEGES ON SEQUENCE ds_label_id_seq TO ds_user ;
 CREATE UNIQUE INDEX CONCURRENTLY ds_label_type ON ds_label (lower(label), type) ;
 
 CREATE TABLE IF NOT EXISTS ds_image_data (
+  id BIGSERIAL PRIMARY KEY,
   image_url TEXT NOT NULL,
   type INTEGER NOT NULL REFERENCES ds_type(id) ON DELETE CASCADE,
   label_id INTEGER NOT NULL REFERENCES ds_label(id),
@@ -30,5 +31,6 @@ CREATE TABLE IF NOT EXISTS ds_image_data (
   updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 GRANT ALL PRIVILEGES ON TABLE ds_image_data TO ds_user ;
+GRANT ALL PRIVILEGES ON SEQUENCE ds_image_data_id_seq TO ds_user ;
 CREATE UNIQUE INDEX CONCURRENTLY ds_image_data_image_url_type_label ON ds_image_data (image_url, type, label_id) ;
 CREATE INDEX CONCURRENTLY ON ds_image_data (created_at DESC);

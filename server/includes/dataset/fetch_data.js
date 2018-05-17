@@ -53,18 +53,18 @@ module.exports = Promise.coroutine(function* (params) {
   if (offset_type === 'next') {
     data = yield Promise.using(postgres.getConnection()
     , conn => {
-      return conn.query(`SELECT image_url
+      return conn.query(`SELECT id
+                        , image_url
                         , label_id
                         , created_at
-                        , extract(epoch from created_at)*1000 AS created_at_epoch
                         , updated_at
                         FROM ds_image_data
-                        WHERE CASE WHEN $<sorting_order> = 'ASC' THEN extract(epoch from created_at)*1000 > $<reference>
-                        WHEN $<sorting_order> = 'DESC' THEN extract(epoch from created_at)*1000 < $<reference>
+                        WHERE CASE WHEN $<sorting_order> = 'ASC' THEN id > $<reference>
+                        WHEN $<sorting_order> = 'DESC' THEN id < $<reference>
                         END
                         AND type = $<ds_type>
                         ${where_clause}
-                        ORDER BY created_at ${sorting_order}
+                        ORDER BY id ${sorting_order}
                         LIMIT $<page_size>`
         , { ds_type, page_size, sorting_order, reference });
     }).catch(err => {
@@ -74,18 +74,18 @@ module.exports = Promise.coroutine(function* (params) {
   } else {
     data = yield Promise.using(postgres.getConnection()
     , conn => {
-      return conn.query(`SELECT image_url
+      return conn.query(`SELECT id
+                        , image_url
                         , label_id
                         , created_at
-                        , extract(epoch from created_at)*1000 AS created_at_epoch
                         , updated_at
                         FROM ds_image_data
-                        WHERE CASE WHEN $<sorting_order> = 'ASC' THEN extract(epoch from created_at)*1000 < $<reference>
-                        WHEN $<sorting_order> = 'DESC' THEN extract(epoch from created_at)*1000 > $<reference>
+                        WHERE CASE WHEN $<sorting_order> = 'ASC' THEN id < $<reference>
+                        WHEN $<sorting_order> = 'DESC' THEN id > $<reference>
                         END
                         AND type = $<ds_type>
                         ${where_clause}
-                        ORDER BY created_at ${sorting_order}
+                        ORDER BY id ${sorting_order}
                         LIMIT $<page_size>`
         , { ds_type, page_size, sorting_order, reference });
     }).catch(err => {
