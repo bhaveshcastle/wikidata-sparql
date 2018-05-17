@@ -18,7 +18,6 @@ module.exports = Promise.coroutine(function* (params) {
   } = params;
 
   if (!ds_type) { return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS)); }
-  if (!_labels) { return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS)); }
 
   let allowed_sorting_types = ['ASC', 'DESC'];
 
@@ -34,18 +33,21 @@ module.exports = Promise.coroutine(function* (params) {
       return Promise.reject(new CustomError( error_handler.ERROR_UNKNOWN ) ) ;
   }
 
-  let labels;
+  let labels = [];
   try {
     labels = JSON.parse(_labels);
   } catch (error) {
-    return Promise.reject(new CustomError(error_handler.INVALID_ARGUMENTS));
+    console.error('Error in parsing labels');
   }
   
-  let where_clause = `AND (label_id = ${labels[0]}`;
-  for (let i = 1; i < labels.length; i++) {
-    where_clause += `OR label_id = ${labels[i]}`;
+  let where_clause = '';
+  if (labels.length > 0) {
+    where_clause += `AND (label_id = ${labels[0]}`;
+    for (let i = 1; i < labels.length; i++) {
+      where_clause += `OR label_id = ${labels[i]}`;
+    }
+    where_clause += `)`;
   }
-  where_clause += `)`;
 
   let data = [];
   if (offset_type === 'next') {
