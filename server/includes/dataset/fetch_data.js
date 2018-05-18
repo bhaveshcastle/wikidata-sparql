@@ -5,7 +5,7 @@ const config        = require('../config.js')             ;
 const postgres      = require('../db/postgres.js')      ;
 const error_handler = require('../misc/error_handler.js') ;
 const CustomError   = require('../misc/custom_error.js')  ;
-
+const get_labels    = require('./get_all_labels.js');
 
 module.exports = Promise.coroutine(function* (params) {
   const {
@@ -92,6 +92,20 @@ module.exports = Promise.coroutine(function* (params) {
       console.error('Error fetching data ', err);
       return Promise.reject(new CustomError(error_handler.ERROR_UNKNOWN));
     });
+  }
+
+  const label_list = yield get_labels({ dataset_id: ds_type });
+  let label_map = {};
+  if (label_list && label_list.length > 0) {
+    for (let i = 0; i < label_list.length; i++) {
+      label_map[label_list[i].id] = label_list[i].label;
+    }
+  }
+
+  if (data && data.length > 0) {
+    for (let i = 0; i < data.length; i++) {
+      data[i]['label'] = label_map[data[i].label_id];
+    }
   }
   
   return data;
